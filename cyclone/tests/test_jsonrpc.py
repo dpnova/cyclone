@@ -17,6 +17,7 @@ from twisted.trial import unittest
 from mock import Mock
 from cyclone.jsonrpc import JsonrpcRequestHandler
 from cyclone.web import Application
+import json
 
 
 class TestJsonrpcRequestHandler(unittest.TestCase):
@@ -32,4 +33,4 @@ class TestJsonrpcRequestHandler(unittest.TestCase):
         self.handler.request.body = '{"id":1, "method":"foo"}'
         self.handler.post()
         self.handler.finish.assert_called_with(
-            '{"error": null, "id": 1, "result": "value"}')
+            json.dumps({"error": None, "id": 1, "result": "value"}))
