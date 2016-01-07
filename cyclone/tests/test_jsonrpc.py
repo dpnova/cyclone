@@ -32,5 +32,8 @@ class TestJsonrpcRequestHandler(unittest.TestCase):
         self.handler.jsonrpc_foo = lambda: "value"
         self.handler.request.body = '{"id":1, "method":"foo"}'
         self.handler.post()
-        self.handler.finish.assert_called_with(
-            json.dumps({"error": None, "id": 1, "result": "value"}))
+        arg = self.handler.finish.call_args[0][0]
+        self.assertEqual(
+            json.loads(arg),
+            {"error": None, "id": 1, "result": "value"}
+        )
