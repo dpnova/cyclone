@@ -56,6 +56,7 @@ import base64
 import binascii
 import hashlib
 import hmac
+import logging
 import time
 import urllib
 import urlparse
@@ -1002,7 +1003,9 @@ class FacebookGraphMixin(OAuth2Mixin):
     def _on_access_token(self, redirect_uri, client_id, client_secret,
                         callback, fields, response):
         if response.error:
-            log.warning('Facebook auth error: %s' % str(response))
+            log.msg(
+                'Facebook auth error: %s' % str(response), 
+                logLevel=logging.WARNING)
             callback(None)
             return
 
