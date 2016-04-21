@@ -1087,8 +1087,8 @@ class FacebookGraphMixin(OAuth2Mixin):
 
     def _on_facebook_request(self, callback, response):
         if response.error:
-            log.warning("Error response %s fetching %s", response.error,
-                            response.request.url)
+            log.msg("Error response %s fetching %s" % (response.error,
+                            response.request.url), logLevel=logging.WARNING)
             callback(None)
             return
         callback(escape.json_decode(response.body))
