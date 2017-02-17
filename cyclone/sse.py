@@ -56,7 +56,7 @@ class SSEHandler(RequestHandler):
         """
         if isinstance(message, dict):
             message = escape.json_encode(message)
-        if isinstance(message, unicode):
+        if isinstance(message, str):
             message = message.encode("utf-8")
         assert isinstance(message, str)
 

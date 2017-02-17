@@ -48,7 +48,7 @@ class MessageTest(unittest.TestCase):
             "hi thar",
             "This is a message."
         )
-        self.assertTrue(isinstance(message.to_addrs, types.ListType))
+        self.assertTrue(isinstance(message.to_addrs, list))
 
     def test_attach(self):
         open("foo.txt", "w").write("sometext")

@@ -31,6 +31,7 @@ from cyclone.web import HTTPError, RequestHandler
 
 from twisted.internet import defer
 from twisted.python import log, failure
+import collections
 
 
 class JsonrpcRequestHandler(RequestHandler):
@@ -57,17 +58,17 @@ class JsonrpcRequestHandler(RequestHandler):
             req = cyclone.escape.json_decode(self.request.body)
             jsonid = req["id"]
             method = req["method"]
-            assert isinstance(method, types.StringTypes), \
+            assert isinstance(method, (str,)), \
                               "Invalid method type: %s" % type(method)
             params = req.get("params", [])
-            assert isinstance(params, (types.ListType, types.TupleType)), \
+            assert isinstance(params, (list, tuple)), \
                               "Invalid params type: %s" % type(params)
         except Exception as e:
             log.msg("Bad Request: %s" % str(e))
             raise HTTPError(400)
 
         function = getattr(self, "jsonrpc_%s" % method, None)
-        if callable(function):
+        if isinstance(function, collections.Callable):
             args = list(args) + params
             d = defer.maybeDeferred(function, *args)
             d.addBoth(self._cbResult, jsonid)

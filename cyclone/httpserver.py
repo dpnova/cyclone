@@ -29,13 +29,13 @@ This module also defines the `HTTPRequest` class which is exposed via
 `cyclone.web.RequestHandler.request`.
 """
 
-from __future__ import absolute_import, division, with_statement
+
 
 try:
     import http.cookies as Cookie
 except ImportError:
     # python 2 compatibility
-    import Cookie
+    import http.cookies
 
 import socket
 import time
@@ -194,7 +194,7 @@ class HTTPConnection(basic.LineReceiver):
         if self._request.method in ("POST", "PATCH", "PUT"):
             if content_type.startswith("application/x-www-form-urlencoded"):
                 arguments = parse_qs_bytes(native_str(self._request.body))
-                for name, values in arguments.iteritems():
+                for name, values in arguments.items():
                     values = [v for v in values if v]
                     if values:
                         self._request.arguments.setdefault(name,
@@ -340,7 +340,7 @@ class HTTPRequest(object):
     def cookies(self):
         """A dictionary of Cookie.Morsel objects."""
         if not hasattr(self, "_cookies"):
-            self._cookies = Cookie.SimpleCookie()
+            self._cookies = http.cookies.SimpleCookie()
             if "Cookie" in self.headers:
                 try:
                     self._cookies.load(

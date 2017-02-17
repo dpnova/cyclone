@@ -16,7 +16,7 @@
 from cyclone.httpserver import HTTPRequest, HTTPConnection
 from cyclone.web import decode_signed_value
 from cyclone.httputil import HTTPHeaders
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from twisted.test import proto_helpers
 from twisted.internet.defer import inlineCallbacks, returnValue
 
@@ -24,7 +24,7 @@ try:
     from http.cookies import SimpleCookie
 except ImportError:
     # python 2 compatibility
-    from Cookie import SimpleCookie
+    from http.cookies import SimpleCookie
 
 
 class DecodingSimpleCookie(SimpleCookie):
@@ -94,10 +94,10 @@ class Client(object):
     def request(self, method, uri, *args, **kwargs):
         params = kwargs.pop("params", {}) or {}
         if method in ["GET", "HEAD", "OPTIONS"] and params:
-            uri = uri + "?" + urllib.urlencode(params)
+            uri = uri + "?" + urllib.parse.urlencode(params)
         elif method in ["POST", "PATCH", "PUT"]\
                 and params and not kwargs['body']:
-            kwargs['body'] = urllib.urlencode(params)
+            kwargs['body'] = urllib.parse.urlencode(params)
         connection = kwargs.pop('connection')
         if not connection:
             connection = HTTPConnection()
@@ -110,7 +110,7 @@ class Client(object):
                 kwargs['headers'] = {}
             kwargs['headers']['Cookie'] = cookie_value.strip()
         request = HTTPRequest(method, uri, *args, **kwargs)
-        for k, p in params.items():
+        for k, p in list(params.items()):
             request.arguments.setdefault(k, []).append(p)
         connection.connectionMade()
         connection._request = request

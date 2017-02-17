@@ -21,15 +21,15 @@ Also includes a few other miscellaneous string manipulation functions that
 have crept in over time.
 """
 
-from __future__ import absolute_import, division, with_statement
+
 
 try:
     from urllib.parse import parse_qs as _parse_qs  # py3
 except ImportError:
-    from urlparse import parse_qs as _parse_qs  # Python 2.6+
+    from urllib.parse import parse_qs as _parse_qs  # Python 2.6+
 
 try:
-    import htmlentitydefs  # py2
+    import html.entities  # py2
 except ImportError:
     import html.entities as htmlentitydefs  # py3
 
@@ -45,9 +45,10 @@ from cyclone.util import basestring_type
 from cyclone.util import bytes_type
 from cyclone.util import unicode_type
 from cyclone.util import unicode_char_type
+import collections
 
 try:
-    from urlparse import parse_qs  # Python 2.6+
+    from urllib.parse import parse_qs  # Python 2.6+
 except ImportError:
     from cgi import parse_qs
 
@@ -162,7 +163,7 @@ else:
         result = _parse_qs(qs, keep_blank_values, strict_parsing,
                            encoding='latin1', errors='strict')
         encoded = {}
-        for k, v in result.items():
+        for k, v in list(result.items()):
             encoded[k] = [i.encode('latin1') for i in v]
         return encoded
 
@@ -230,7 +231,7 @@ def recursive_unicode(obj):
     """
     if isinstance(obj, dict):
         return dict((recursive_unicode(k), recursive_unicode(v))
-                     for (k, v) in obj.iteritems())
+                     for (k, v) in obj.items())
     elif isinstance(obj, list):
         return list(recursive_unicode(i) for i in obj)
     elif isinstance(obj, tuple):
@@ -283,7 +284,7 @@ def linkify(text, shorten=False, extra_params="",
         e.g. linkify(text, permitted_protocols=["http", "ftp", "mailto"]).
         It is very unsafe to include protocols such as "javascript".
     """
-    if extra_params and not callable(extra_params):
+    if extra_params and not isinstance(extra_params, collections.Callable):
         extra_params = " " + extra_params.strip()
 
     def make_link(m):
@@ -299,7 +300,7 @@ def linkify(text, shorten=False, extra_params="",
         if not proto:
             href = "http://" + href   # no proto specified, use http
 
-        if callable(extra_params):
+        if isinstance(extra_params, collections.Callable):
             params = " " + extra_params(href).strip()
         else:
             params = extra_params
@@ -363,7 +364,7 @@ def _convert_entity(m):
 
 def _build_unicode_map():
     unicode_map = {}
-    for name, value in htmlentitydefs.name2codepoint.items():
+    for name, value in list(html.entities.name2codepoint.items()):
         unicode_map[name] = unicode_char_type(value)
     return unicode_map
 

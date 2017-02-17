@@ -16,7 +16,7 @@
 from twisted.trial import unittest
 from cyclone.httpclient import StringProducer, Receiver, HTTPClient, fetch
 import cyclone.httpclient
-from cStringIO import StringIO
+from io import StringIO
 from twisted.internet.defer import inlineCallbacks, Deferred, succeed, fail
 from mock import Mock
 import functools
@@ -50,7 +50,7 @@ class TestReceiver(unittest.TestCase):
 
 
 class TestHTTPClient(unittest.TestCase):
-    URL = "http://example.com"
+    URL = b"http://example.com"
 
     def test_create_client(self):
         client = HTTPClient(self.URL)
@@ -94,6 +94,7 @@ class TestHTTPClient(unittest.TestCase):
         client = HTTPClient("http://example.com")
         client.agent = Mock()
         _response = Mock()
+        _response.code = 200
         _response.headers.getAllRawHeaders.return_value = {}
         _response.deliverBody = lambda x: x.dataReceived("done") \
             or x.connectionLost(None)
@@ -106,6 +107,7 @@ class TestHTTPClient(unittest.TestCase):
         client = HTTPClient("http://example.com", method="HEAD")
         client.agent = Mock()
         _response = Mock()
+        _response.code = 200
         _response.headers.getAllRawHeaders.return_value = {}
         _response.deliverBody = lambda x: x.connectionLost(None)
         client.agent.request.return_value = succeed(_response)
@@ -183,7 +185,7 @@ class TestHTTPClient(unittest.TestCase):
 
 
 class FetchTest(unittest.TestCase):
-    URL = "http://example.com"
+    URL = b"http://example.com"
 
     def setUp(self):
         cyclone.httpclient.HTTPClient = Mock()
@@ -197,7 +199,7 @@ class FetchTest(unittest.TestCase):
 
 
 class JsonRPCTest(unittest.TestCase):
-    URL = "http://example.com/jsonrpc"
+    URL = b"http://example.com/jsonrpc"
 
     def setUp(self):
         self._old_fetch = cyclone.httpclient.fetch

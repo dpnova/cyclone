@@ -88,22 +88,22 @@ else:
         return s.decode('unicode_escape')
     # These names don't exist in py3, so use noqa comments to disable
     # warnings in flake8.
-    unicode_type = unicode  # noqa
-    basestring_type = basestring  # noqa
+    unicode_type = str  # noqa
+    basestring_type = str  # noqa
 
 bytes_type = str
 
 if sys.version_info < (3,):
-    unicode_type = unicode
-    unicode_char_type = unichr
-    basestring_type = basestring
+    unicode_type = str
+    unicode_char_type = chr
+    basestring_type = str
     import types
-    list_type = types.ListType
-    dict_type = types.DictType
-    int_type = types.IntType
-    tuple_type = types.TupleType
-    string_type = types.StringType
-    string_types = types.StringTypes
+    list_type = list
+    dict_type = dict
+    int_type = int
+    tuple_type = tuple
+    string_type = bytes
+    string_types = (str,)
     exec("""
 def raise_exc_info(exc_info):
     raise exc_info[0], exc_info[1], exc_info[2]

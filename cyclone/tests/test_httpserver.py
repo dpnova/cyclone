@@ -25,7 +25,7 @@ try:
     import http.cookies as Cookie
 except ImportError:
     # python 2 compatibility
-    import Cookie
+    import http.cookies
 
 class HTTPConnectionTest(unittest.TestCase):
     def setUp(self):
@@ -352,13 +352,13 @@ class HTTPRequestTest(unittest.TestCase):
         def throw_exc(ignore):
             raise Exception()
 
-        old_cookie = Cookie.SimpleCookie
-        Cookie.SimpleCookie = Mock()
-        Cookie.SimpleCookie.return_value.load = throw_exc
+        old_cookie = http.cookies.SimpleCookie
+        http.cookies.SimpleCookie = Mock()
+        http.cookies.SimpleCookie.return_value.load = throw_exc
         self.req.cookies
         cookies = self.req.cookies
         self.assertEqual(cookies, {})
-        Cookie.SimpleCookie = old_cookie
+        http.cookies.SimpleCookie = old_cookie
 
     def test_full_url(self):
         expected = "http://127.0.0.1/something"

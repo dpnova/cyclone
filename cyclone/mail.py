@@ -25,7 +25,7 @@ For more information, check out the `e-mail demo
 import types
 import os.path
 
-from cStringIO import StringIO
+from io import StringIO
 from OpenSSL.SSL import OP_NO_SSLv3
 
 from email import Encoders
@@ -69,7 +69,7 @@ class Message(object):
         self.subject = subject
         self.from_addr = from_addr
 
-        if isinstance(to_addrs, types.StringType):
+        if isinstance(to_addrs, bytes):
             self.to_addrs = [to_addrs]
         else:
             self.to_addrs = to_addrs
@@ -95,7 +95,7 @@ class Message(object):
             fd = open(filename)
             content = fd.read()
             fd.close()
-        elif not isinstance(content, types.StringType):
+        elif not isinstance(content, bytes):
             raise TypeError("Don't know how to attach content: %s" %
                             repr(content))
 
@@ -163,7 +163,7 @@ def sendmail(mailconf, message):
         d = mail.sendmail(mailconf, msg)
         d.addCallback(on_response)
     """
-    if not isinstance(mailconf, types.DictType):
+    if not isinstance(mailconf, dict):
         raise TypeError("mailconf must be a regular python dictionary")
 
     if not isinstance(message, Message):
@@ -171,10 +171,10 @@ def sendmail(mailconf, message):
 
     host = mailconf.get("host")
 
-    if isinstance(host, unicode):
-        host = str(unicode)
+    if isinstance(host, str):
+        host = str(str)
 
-    if not isinstance(host, types.StringType):
+    if not isinstance(host, bytes):
         raise ValueError("mailconf requires a 'host' configuration")
 
     use_tls = mailconf.get("tls")
@@ -186,7 +186,7 @@ def sendmail(mailconf, message):
         port = mailconf.get("port", 25)
         contextFactory = None
 
-    if not isinstance(port, types.IntType):
+    if not isinstance(port, int):
         raise ValueError("mailconf requires a proper 'port' configuration")
 
     result = Deferred()

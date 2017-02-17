@@ -49,7 +49,7 @@ repository.
      $ cyclone app --project=foobar --appskel=signup
 """
 
-from __future__ import with_statement
+
 import base64
 import getopt
 import os
@@ -137,7 +137,7 @@ def new_project(**kwargs):
 
 
 def usage(version):
-    print("""\
+    print(("""\
 usage: cyclone app [options]
 Options:
  -h --help              Show this help.
@@ -163,7 +163,7 @@ Examples:
  $ cyclone app -n > hello.py
 
  For a project that requires sign up:
- $ cyclone app --project=foobar --appskel=signup""" % version)
+ $ cyclone app --project=foobar --appskel=signup""" % version))
     sys.exit(0)
 
 
@@ -192,7 +192,7 @@ def main():
 
         if o in ("-n", "--new"):
             license = DEFAULT_LICENSE % {"year": datetime.now().year}
-            print("%s%s" % (license, SAMPLE_SERVER))
+            print(("%s%s" % (license, SAMPLE_SERVER)))
             sys.exit(1)
 
         if o in ("-g", "--git"):
@@ -220,7 +220,7 @@ def main():
             if a in ("default", "foreman", "signup"):
                 skel = a
             else:
-                print("Invalid appskel name: %s" % a)
+                print(("Invalid appskel name: %s" % a))
                 sys.exit(1)
 
     if license_file is None:
@@ -242,11 +242,11 @@ def main():
 
     if modname in ("frontend", "tools", "twisted"):
         if mod_is_proj is True:
-            print("Please specify a different modname, using "
-                  "--modname=name. '%s' is not allowed." % modname)
+            print(("Please specify a different modname, using "
+                  "--modname=name. '%s' is not allowed." % modname))
         else:
-            print("Please specify a different modname. "
-                  "'%s' is not allowed." % modname)
+            print(("Please specify a different modname. "
+                  "'%s' is not allowed." % modname))
         sys.exit(1)
 
     if not re.match(r"^[0-9a-z_]+$", modname, re.I):
@@ -260,8 +260,8 @@ def main():
         target = default_target
 
     if not (os.access(target, os.W_OK) and os.access(target, os.X_OK)):
-        print("Cannot create project on target directory "
-              "'%s': permission denied" % target)
+        print(("Cannot create project on target directory "
+              "'%s': permission denied" % target))
         sys.exit(1)
 
     name = "Foo Bar"
@@ -291,10 +291,10 @@ def main():
 
     project_path = os.path.join(target, project_name)
     if os.path.exists(project_path):
-        print("Directory '%s' already exists. Either remove it, or set a "
+        print(("Directory '%s' already exists. Either remove it, or set a "
               "different project name. "
               "e.g.: python -m cyclone.app -p %sz" % (project_path,
-                                                      project_name))
+                                                      project_name)))
         sys.exit(1)
 
     new_project(skel=skel,

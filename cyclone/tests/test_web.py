@@ -20,12 +20,13 @@ from cyclone.web import Application, URLSpec, URLReverseError
 from cyclone.escape import unicode_type
 from mock import Mock
 from datetime import datetime
+import collections
 
 try:
     import http.cookies as Cookie
 except ImportError:
     # python 2 compatibility
-    import Cookie
+    import http.cookies
 
 import email.utils
 import calendar
@@ -116,7 +117,7 @@ class RequestHandlerTest(unittest.TestCase):
         self.assertEqual(value, "Value")
 
     def test_convert_unicode_header_value(self):
-        value = self.rh._convert_header_value(u"Value")
+        value = self.rh._convert_header_value("Value")
         self.assertEqual(value, "Value")
         self.assertTrue(type(value) != unicode_type)
 
@@ -187,7 +188,7 @@ class RequestHandlerTest(unittest.TestCase):
             ValueError, self.rh.set_cookie, "\x00bbb", "badcookie")
 
     def test_set_cookie_already_exists(self):
-        self.rh._new_cookie = Cookie.SimpleCookie()
+        self.rh._new_cookie = http.cookies.SimpleCookie()
         self.rh._new_cookie["name"] = "value"
         self.rh.set_cookie("name", "value")
 
@@ -446,7 +447,7 @@ class TestRequestHandler(unittest.TestCase):
     def _mkDeferred(self, rv, delay=None):
         d = defer.Deferred()
 
-        if callable(rv):
+        if isinstance(rv, collections.Callable):
             cb = lambda: d.callback(rv())
         else:
             cb = lambda: d.callback(rv)

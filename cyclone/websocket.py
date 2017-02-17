@@ -109,7 +109,7 @@ class WebSocketHandler(cyclone.web.RequestHandler):
         """
         if isinstance(message, dict):
             message = cyclone.escape.json_encode(message)
-        if isinstance(message, unicode):
+        if isinstance(message, str):
             message = message.encode("utf-8")
         assert isinstance(message, str)
         self.ws_protocol.sendMessage(message)
@@ -297,7 +297,7 @@ class WebSocketProtocol17(WebSocketProtocol):
             for j in range(0, 4):
                 frame_mask_array.append(ord(frame_mask[j]))
             payload = bytearray(data[i:i + self._frame_payload_len])
-            for k in xrange(0, self._frame_payload_len):
+            for k in range(0, self._frame_payload_len):
                 payload[k] ^= frame_mask_array[k % 4]
 
             return str(payload)
@@ -305,7 +305,7 @@ class WebSocketProtocol17(WebSocketProtocol):
             return data[i:i+self._frame_payload_len]
 
     def sendMessage(self, message, code=0x81):
-        if isinstance(message, unicode):
+        if isinstance(message, str):
             message = message.encode('utf8')
         length = len(message)
         newFrame = []

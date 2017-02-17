@@ -17,7 +17,7 @@
 
 """HTTP utility code shared by clients and servers."""
 
-from __future__ import absolute_import, division, with_statement
+
 
 import re
 
@@ -32,7 +32,7 @@ try:
      from urllib.parse import urlencode
 except ImportError:
     # python 2 compatibility
-    from urllib import urlencode
+    from urllib.parse import urlencode
 
 
 class HTTPHeaders(dict):
@@ -101,7 +101,7 @@ class HTTPHeaders(dict):
         If a header has multiple values, multiple pairs will be
         returned with the same name.
         """
-        for name, list in self._as_list.items():
+        for name, list in list(self._as_list.items()):
             for value in list:
                 yield (name, value)
 
@@ -162,7 +162,7 @@ class HTTPHeaders(dict):
 
     def update(self, *args, **kwargs):
         # dict.update bypasses our __setitem__
-        for k, v in dict(*args, **kwargs).items():
+        for k, v in list(dict(*args, **kwargs).items()):
             self[k] = v
 
     def copy(self):
@@ -228,7 +228,7 @@ def parse_body_arguments(content_type, body, arguments, files):
     """
     if content_type.startswith("application/x-www-form-urlencoded"):
         uri_arguments = parse_qs_bytes(native_str(body))
-        for name, values in uri_arguments.items():
+        for name, values in list(uri_arguments.items()):
             values = [v for v in values if v]
             if values:
                 arguments.setdefault(name, []).extend(values)

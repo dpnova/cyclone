@@ -29,6 +29,7 @@ import sys
 
 from twisted.python import log
 from twisted.internet import reactor
+import collections
 
 _handlers = []
 _BaseHandler = None
@@ -68,7 +69,7 @@ def route(path=None, method="GET", callback=None, **kwargs):
         def all_routes(cli):
             ...
     """
-    if callable(path):
+    if isinstance(path, collections.Callable):
         path, callback = None, path
 
     def decorator(callback):
@@ -109,7 +110,7 @@ def create_app(**settings):
 
     _handlers = None
 
-    handlers = handlers.items() + settings.pop("more_handlers", [])
+    handlers = list(handlers.items()) + settings.pop("more_handlers", [])
 
     return cyclone.web.Application(handlers, **settings)
 
