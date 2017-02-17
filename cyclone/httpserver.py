@@ -30,12 +30,11 @@ This module also defines the `HTTPRequest` class which is exposed via
 """
 
 
-
 try:
     import http.cookies as Cookie
 except ImportError:
     # python 2 compatibility
-    import http.cookies
+    import Cookie
 
 import socket
 import time
@@ -340,7 +339,7 @@ class HTTPRequest(object):
     def cookies(self):
         """A dictionary of Cookie.Morsel objects."""
         if not hasattr(self, "_cookies"):
-            self._cookies = http.cookies.SimpleCookie()
+            self._cookies = Cookie.SimpleCookie()
             if "Cookie" in self.headers:
                 try:
                     self._cookies.load(

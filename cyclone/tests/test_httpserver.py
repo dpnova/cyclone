@@ -25,7 +25,8 @@ try:
     import http.cookies as Cookie
 except ImportError:
     # python 2 compatibility
-    import http.cookies
+    import Cookie
+
 
 class HTTPConnectionTest(unittest.TestCase):
     def setUp(self):
@@ -73,8 +74,8 @@ class HTTPConnectionTest(unittest.TestCase):
     def test_write(self):
         self.con.transport = StringTransport()
         self.con._request = Mock()
-        self.con.write("data")
-        self.assertEqual(self.con.transport.io.getvalue(), "data")
+        self.con.write(b"data")
+        self.assertEqual(self.con.transport.io.getvalue(), b"data")
 
     def test_finish(self):
         self.con._request = Mock()
@@ -142,7 +143,7 @@ class HTTPConnectionTest(unittest.TestCase):
         self.con.transport.loseConnection.assert_called_with()
 
     def test_on_headers_simple(self):
-        self.con._remote_ip = Mock()
+        # self.con._remote_ip = Mock()
         self.con.request_callback = Mock()
         self.con.__dict__['_remote_ip'] = "127.0.0.1"
         self.con.connectionMade()
@@ -152,7 +153,7 @@ class HTTPConnectionTest(unittest.TestCase):
         self.assertEqual(self.con.request_callback.call_count, 1)
 
     def test_on_headers_invalid(self):
-        self.con._remote_ip = Mock()
+        # self.con._remote_ip = Mock()
         self.con.request_callback = Mock()
         self.con.transport = Mock()
         self.con.__dict__['_remote_ip'] = "127.0.0.1"
@@ -163,7 +164,7 @@ class HTTPConnectionTest(unittest.TestCase):
         self.con.transport.loseConnection.assert_called_with()
 
     def test_on_headers_invalid_version(self):
-        self.con._remote_ip = Mock()
+        # self.con._remote_ip = Mock()
         self.con.request_callback = Mock()
         self.con.transport = Mock()
         self.con.__dict__['_remote_ip'] = "127.0.0.1"
@@ -245,7 +246,7 @@ class HTTPConnectionTest(unittest.TestCase):
         self.con._request.arguments = {}
         self.con._request.method = "POST"
         self.con._request.headers = {
-            "Content-Type": "multipart/form-data; boundary=AaB03x"
+            b"Content-Type": b"multipart/form-data; boundary=AaB03x"
         }
         data = \
             "--AaB03x\r\n"\
@@ -352,13 +353,13 @@ class HTTPRequestTest(unittest.TestCase):
         def throw_exc(ignore):
             raise Exception()
 
-        old_cookie = http.cookies.SimpleCookie
-        http.cookies.SimpleCookie = Mock()
-        http.cookies.SimpleCookie.return_value.load = throw_exc
+        old_cookie = Cookie.SimpleCookie
+        Cookie.SimpleCookie = Mock()
+        Cookie.SimpleCookie.return_value.load = throw_exc
         self.req.cookies
         cookies = self.req.cookies
         self.assertEqual(cookies, {})
-        http.cookies.SimpleCookie = old_cookie
+        Cookie.SimpleCookie = old_cookie
 
     def test_full_url(self):
         expected = "http://127.0.0.1/something"

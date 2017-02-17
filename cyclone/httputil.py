@@ -17,8 +17,6 @@
 
 """HTTP utility code shared by clients and servers."""
 
-
-
 import re
 
 from cyclone.util import ObjectDict
@@ -29,7 +27,7 @@ from cyclone.escape import utf8
 from twisted.python import log
 
 try:
-     from urllib.parse import urlencode
+    from urllib.parse import urlencode
 except ImportError:
     # python 2 compatibility
     from urllib.parse import urlencode
@@ -69,7 +67,7 @@ class HTTPHeaders(dict):
         self._as_list = {}
         self._last_key = None
         if (len(args) == 1 and len(kwargs) == 0 and
-            isinstance(args[0], HTTPHeaders)):
+                isinstance(args[0], HTTPHeaders)):
             # Copy constructor
             for k, v in args[0].get_all():
                 self.add(k, v)
@@ -255,9 +253,9 @@ def parse_multipart_form_data(boundary, data, arguments, files):
     # xmpp).  I think we're also supposed to handle backslash-escapes
     # here but I'll save that until we see a client that uses them
     # in the wild.
-    if boundary.startswith('"') and boundary.endswith('"'):
+    if boundary.startswith(b'"') and boundary.endswith(b'"'):
         boundary = boundary[1:-1]
-    final_boundary_index = data.rfind("--" + boundary + "--")
+    final_boundary_index = data.rfind(b"--" + boundary + b"--")
     if final_boundary_index == -1:
         log.msg("Invalid multipart/form-data: no final boundary")
         return
